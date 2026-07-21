@@ -1,10 +1,11 @@
 import React from 'react'
 
-const Create = ({rounds ,setRounds ,handleCreate}) => {
+const Create = ({rounds ,setRounds ,handleCreate,setHandleCreateInput}) => {
   return (
     <div className='flex flex-col gap-3'>
-        <input  type='number' placeholder='enter room id' className='rounded border p-3' value={rounds} onChange={(e)=>setRounds(e.target.value)}></input>
+        <input  type='number' placeholder='total rounds' className='rounded border p-3' value={rounds} onChange={(e)=>setRounds(e.target.value)}></input>
         <button onClick={handleCreate}>Create</button>
+        <button onClick={()=>setHandleCreateInput(false)}>cancel</button>
     </div>
   )
 }

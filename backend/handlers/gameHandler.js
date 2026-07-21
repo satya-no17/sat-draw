@@ -1,6 +1,6 @@
-import generateWord from "../game/generateWord.js";
 import words from "../game/words.js";
 import { rooms, ROUND_TIME } from "../game/room.js";
+import { generateWord } from './../game/generateWord.js';
 
 
 

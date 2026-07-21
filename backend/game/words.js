@@ -1,4 +1,4 @@
-export default words = [
+export default [
   "apple", "banana", "orange", "mango", "grape", "lemon", "peach", "cherry", "melon", "kiwi",
   "pineapple", "coconut", "strawberry", "blueberry", "raspberry", "watermelon", "pear", "plum", "apricot", "avocado",
   "cat", "dog", "rabbit", "horse", "cow", "sheep", "goat", "pig", "chicken", "duck",

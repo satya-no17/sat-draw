@@ -2,7 +2,7 @@
 import { getRandomAvatarIndex } from "@/lib/avatar";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const router = useRouter()
@@ -15,10 +15,16 @@ export default function Home() {
       name: name,
       avatar: getRandomAvatarIndex(),
     }
-    localStorage.setItem("user", JSON.stringify(guestUser))
+    localStorage.setItem("sat_Draw_User", JSON.stringify(guestUser))
     console.log(guestUser)
     router.push('/dashboard')
   }
+
+  useEffect(() => {
+    const raw = localStorage.getItem('sat_Draw_User')
+    if(raw)router.push('/dashboard')
+  }, [])
+  
   return (
     <div className="bg-blue-800 w-full h-screen flex items-center justify-center gap-4 flex-col">
       <div className="fixed top-0 w-full text-center py-4 bg-blue-800 shadow">

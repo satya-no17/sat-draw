@@ -2,12 +2,10 @@ import e from "express";
 import cors from 'cors';
 import { createServer } from 'node:http';
 import { Server } from "socket.io";
-import generateWord from "./game/generateWord.js";
 import words from "./game/words.js";
 import { generateRoomCode } from "./game/generateRoom.js";
 import { endRound, handlePlayerLeave, startRound } from "./handlers/gameHandler.js";
-import { ROUND_TIME } from "./game/room.js";
-import { rooms } from "./game/room.js";
+import { rooms, ROUND_TIME } from "./game/room.js";
 const app = e()
 
 const server = createServer(app)
@@ -31,6 +29,7 @@ io.on('connection', (socket) => {
     socket.on("create_room", (data) => {
         const roomId = generateRoomCode();
         rooms[roomId] = {
+            roomId,
             hostId: socket.id,
             status: 'lobby',
             players: [{ id: socket.id, name: data.name, avatar: data.avatar, score: 0, isDrawing: false, hasGuessedCorrect: false }],
@@ -42,7 +41,7 @@ io.on('connection', (socket) => {
             roundTimer: null
         }
         socket.join(roomId)
-        socket.data.roomId = roomId; 
+        socket.data.roomId = roomId;
         socket.emit('room_update', rooms[roomId])
     });
 
@@ -120,17 +119,24 @@ io.on('connection', (socket) => {
         handlePlayerLeave(io, socket, data.roomId);
     });
 
-
+    socket.on('request_room_state', (data) => {
+        const {roomId} = data
+        const room = rooms[roomId];
+        if (!room) return socket.emit('error', { message: "no room" });
+        socket.emit('room_update', room);
+    })
     socket.on("disconnect", () => {
         console.log('user disconnected:', socket.id);
         const roomId = socket.data?.roomId;
         if (roomId) handlePlayerLeave(io, socket, roomId);
     });
 
+
+
 })
 
 server.listen(PORT, () => {
-    console.log('server working')
+    console.log(`Maa ka bhosda aaag aaag server garam h \nbtw running on http://localhost:${PORT}`)
 })
 
 

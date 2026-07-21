@@ -1,6 +1,7 @@
 'use client'
 import Create from '@/components/create'
 import Join from '@/components/join'
+import { getSocket } from '@/lib/socket'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -10,13 +11,20 @@ const Page = () => {
     const [id, setId] = useState()
     const [avatar, setAvatar] = useState()
     const router = useRouter()
-    const [roomId, setRoomId] = useState()
+    const [roomId, setRoomId] = useState('')
     const [handleJoinInput, setHandleJoinInput] = useState(false)
     const [handleCreateInput, setHandleCreateInput] = useState(false)
     const [rounds, setRounds] = useState(3)
 
+
+
     useEffect(() => {
-        const raw = localStorage.getItem('user')
+
+        const raw = localStorage.getItem('sat_Draw_User')
+        if (!raw) {
+            router.push('/')
+            return
+        }
         const user = JSON.parse(raw)
         console.log(user)
         if (user) {
@@ -24,13 +32,16 @@ const Page = () => {
             setAvatar(user.avatar)
             setNames(user.name)
         }
-        console.log(names, id, avatar)
     }, [])
     const handleJoin = () => {
-
+        const socket = getSocket()
+        socket.emit('join_room', { name: names, avatar,roomId })
+        socket.once('room_update', (room) => {console.log(room);router.push(`/room/${room.roomId}`)});
     }
     const handleCreate = () => {
-
+        const socket = getSocket()
+        socket.emit('create_room', { name: names, avatar, totalRounds:rounds })
+        socket.once('room_update', (room) =>{ console.log(room);router.push(`/room/${room.roomId}`)});
     }
 
 
@@ -44,8 +55,8 @@ const Page = () => {
                 <Image className='rounded-full' src={avatar || '/g.png'} height={70} width={70} alt='avataar' />  {names}
             </div>
             <div className='flex gap-4'>
-                {handleJoinInput && <Join roomId={roomId} setRoomId={setRoomId} handleJoin={handleJoin} />}
-                {handleCreateInput && <Create rounds={rounds} setRounds={setRounds} handleCreate={handleCreate}/>}
+                {handleJoinInput && <Join roomId={roomId} setRoomId={setRoomId} handleJoin={handleJoin} setHandleJoinInput={setHandleJoinInput} />}
+                {handleCreateInput && <Create rounds={rounds} setRounds={setRounds} handleCreate={handleCreate} setHandleCreateInput={setHandleCreateInput} />}
                 {handleCreateInput === false && handleJoinInput === false &&
                     <>
                         <button onClick={() => setHandleJoinInput(true)} className="border p-2 rounded-2xl" >
