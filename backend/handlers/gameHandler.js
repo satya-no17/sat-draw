@@ -63,6 +63,8 @@ export function startRound(io, room, roomId) {
             word: player.id === drawerId ? room.currentWord : undefined,
         });
     });
+    io.to(roomId).emit('room_update', room);
+    console.log('gameee')
 
     room.roundTimer = setTimeout(() => {
         endRound(io, room, roomId)

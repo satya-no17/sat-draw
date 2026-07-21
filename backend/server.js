@@ -59,6 +59,8 @@ io.on('connection', (socket) => {
         io.to(roomId).emit('room_update', room)
     });
     socket.on("start_game", (data) => {
+
+        console.log(data)
         const { roomId } = data;
         const room = rooms[roomId]
         if (!room) return socket.emit('error', { message: "no room" })
