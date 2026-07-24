@@ -9,15 +9,18 @@ export function endRound(io, room, roomId) {
         clearTimeout(room.roundTimer)
         room.roundTimer = null
     }
+    console.log('round ended')
     room.status = 'round_end'
     io.to(roomId).emit('round_end', {
         word: room.currentWord,
-        scores: room.players.map(p => ({ id: p.id, name: p.name, score: p.score }))
+        scores: room.players.map(p => ({ id: p.id, name: p.name, score: p.score, avatar: p.avatar }))
     })
-
+    console.log('data send')
+    io.to(roomId).emit('room_update', room);
     setTimeout(() => {
         nextTurn(io, room, roomId)
-    }, 5000);
+        console.log('next started')
+    }, 10000);
 }
 
 export function nextTurn(io, room, roomId) {
@@ -38,6 +41,12 @@ export function nextTurn(io, room, roomId) {
     if (isGameOver) {
         room.status = "game_end"
         io.to(roomId).emit('game_end', {
+            finalScores: room.players.
+                map(p => ({ id: p.id, name: p.name, score: p.score }))
+                .sort((a, b) => b.score - a.score)
+        })
+        //bad me htana h 
+        io.to(roomId).emit('room_update', {
             finalScores: room.players.
                 map(p => ({ id: p.id, name: p.name, score: p.score }))
                 .sort((a, b) => b.score - a.score)
@@ -64,7 +73,7 @@ export function startRound(io, room, roomId) {
         });
     });
     io.to(roomId).emit('room_update', room);
-    console.log('gameee')
+    console.log('gameee  started')
 
     room.roundTimer = setTimeout(() => {
         endRound(io, room, roomId)
@@ -73,34 +82,47 @@ export function startRound(io, room, roomId) {
 }
 
 export function handlePlayerLeave(io, socket, roomId) {
+    console.log('leave')
     const room = rooms[roomId];
     if (!room) return;
-
+    console.log('bug1')
     const leavingIndex = room.players.findIndex(p => p.id === socket.id);
     if (leavingIndex === -1) return;
+    console.log('bug2')
 
     const wasDrawer = room.players[leavingIndex].id === room.players[room.currentDrawerIndex]?.id;
     const wasHost = room.hostId === socket.id;
 
     room.players.splice(leavingIndex, 1);
     socket.leave(roomId);
+    console.log('bug3')
 
     if (leavingIndex < room.currentDrawerIndex) {
         room.currentDrawerIndex -= 1;
     }
+    console.log('bug4')
+
     if (room.players.length === 0) {
         if (room.roundTimer) clearTimeout(room.roundTimer);
         delete rooms[roomId];
         return;
     }
+    console.log('bug5')
 
     if (wasHost) {
         room.hostId = room.players[0].id; // promote next player
     }
+    console.log('bug6')
 
     if (wasDrawer && room.status === 'playing') {
-        endRound(io, room, roomId); // drawer left mid-round, force round to end
+        console.log('bug999')
+
+        endRound(io, room, roomId);
     } else {
+        console.log('bug99')
         io.to(roomId).emit('room_update', room);
+
     }
+    console.log('baigan')
+
 }

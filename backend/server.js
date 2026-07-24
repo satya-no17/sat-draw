@@ -80,9 +80,19 @@ io.on('connection', (socket) => {
         if (socket.id !== drawerId) return
         socket.to(roomId).emit('draw', strokeData)
     });
+    socket.on('draw_end', (data) => {
+        const { roomId } = data
+        const room = rooms[roomId]
+        if (!room) return socket.emit('error', { message: "no room" })
+        const drawerId = room.players[room.currentDrawerIndex]?.id
+        if (socket.id !== drawerId) return
+
+        socket.to(roomId).emit('draw_end')
+    })
 
 
     socket.on("clear_canvas", (data) => {
+
         const { roomId } = data
         const room = rooms[roomId]
         if (!room) return socket.emit('error', { message: "no room" })
@@ -95,14 +105,14 @@ io.on('connection', (socket) => {
     socket.on("send_guess", (data) => {
         const { roomId, ...msg } = data;
         const room = rooms[roomId]
+
         if (!room) return socket.emit('error', { message: "no room" })
-
         const drawerId = room.players[room.currentDrawerIndex]?.id;
-        if (socket.id === drawerId) return;
-
+        if (socket.id === drawerId) {
+            return;
+        }
         const guesser = room.players.find(p => p.id === socket.id);
         if (!guesser || guesser.hasGuessedCorrect) return;
-
         const guessText = msg.message?.trim().toLowerCase();
         const isCorrect = guessText === room.currentWord.toLowerCase();
 
@@ -122,7 +132,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('request_room_state', (data) => {
-        const {roomId} = data
+        const { roomId } = data
         const room = rooms[roomId];
         if (!room) return socket.emit('error', { message: "no room" });
         socket.emit('room_update', room);
