@@ -192,3 +192,4 @@ Readme written by Claude
 
 
 ## 📄 License
+MIT
