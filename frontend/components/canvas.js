@@ -2,16 +2,19 @@ import { getSocket } from '@/lib/socket'
 import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
 import Drawcanvas from './drawcanvas'
+import EndRound from './endRound';
 
 const Canvas = ({ room, }) => {
-  const players = room?.players??[]
-
+  const players = room?.players ?? []
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const scrollRef = useRef(null)
-
+  const [endRound, setEndRound] = useState(false)
+  const [count, setCount] = useState(10)
+  const [RoundUpdate, setRoundUpdate] = useState(null)
+  const intervalRef = useRef(null);
+  const socket = getSocket()
   useEffect(() => {
-    const socket = getSocket()
 
     const handleNewGuess = (data) => {
       const player = room?.players.find(p => p.id === data.playerId)
@@ -54,17 +57,50 @@ const Canvas = ({ room, }) => {
   }, [messages])
 
   const handleSend = (e) => {
-     e.preventDefault();
-    if (!input.trim() ) return
+    e.preventDefault();
+    if (!input.trim()) return
 
-    const socket = getSocket()
+
     socket.emit('send_guess', { roomId: room.roomId, message: input.trim() })
     setInput('')
   }
 
+  const handleEndUpdate = (data) => {
+    //countdown implemented by ai as i dont even know bout the setinterval
+    clearInterval(intervalRef.current);
+    setRoundUpdate(data)
+    setEndRound(true)
+    setCount(10)
+
+    let sec = 10
+
+    intervalRef.current = setInterval(() => {
+      sec--;
+
+      setCount(sec);
+
+      if (sec <= 0) {
+        clearInterval(intervalRef.current);
+        setEndRound(false);
+      }
+    }, 1000);
+  }
+  useEffect(() => {
+    socket.on('round_end', handleEndUpdate)
+
+    return () => {
+      socket.off('round_end', handleEndUpdate)
+    }
+  }, [])
+
+
   return (
     <div className='bg-yellow-400 text-black'>
-      {/* header */}
+
+      {/* header */} {endRound && <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/50">
+        <EndRound RoundUpdate={RoundUpdate} count={count} />
+      </div>}
+
       <div className='w-full flex justify-between items-center'>
         <p>Rounds Left:{room?.totalRounds - room?.currentRound}/{room?.totalRounds}  </p>
         <p className='text-4xl underline'>Sat Draw</p>
@@ -82,13 +118,13 @@ const Canvas = ({ room, }) => {
         </div>
         {/* canvas */}
         <div className='bg-green-400 w-full '>
-          <Drawcanvas room={room}/>
+          <Drawcanvas room={room} />
         </div>
         {/* chat */}
         <div className='flex w-[40%] flex-col bg-amber-600'>
           <div className='w-full bg-amber-600 text-2xl flex  gap-1'>
             <p>Guess this :</p>
-            <p>{room.maskedWord}</p>
+            <p>{room.currentWord}</p>
           </div>
           {/* chat */}
           <div className='bg-purple-500 m-2 h-3/5 rounded shadow flex p-1 justify-center flex-col'>
@@ -110,7 +146,7 @@ const Canvas = ({ room, }) => {
               <div ref={scrollRef} />
             </div>
             <div className=' flex item-center justify-center h-10 w-full '>
-              <input placeholder='enter Guess' className='border p-1 rounded-s-md w-[92%]' value={input} onChange={(e)=>setInput(e.target.value)}></input>
+              <input placeholder='enter Guess' className='border p-1 rounded-s-md w-[92%]' value={input} onChange={(e) => setInput(e.target.value)}></input>
               <button onClick={handleSend} className='border active:animate-bounce animate-pulse p-1 rounded-e-full  '>-&gt;&gt;</button>
             </div>
           </div>
