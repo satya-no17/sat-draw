@@ -11,7 +11,14 @@ export function useRoom(roomId) {
         if (!roomId) return;
         const socket = getSocket()
         const handleRoomUpdate = (updateRoom) => {
-            setRoom(updateRoom)
+            setRoom(prevRoom => {
+                if (!prevRoom) return updateRoom
+                return {
+                    ...prevRoom,
+                    ...updateRoom,
+                    players: updateRoom?.players ?? prevRoom.players,
+                }
+            })
         }
         const handleError = (error) => {
             setError(error.message)

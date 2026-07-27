@@ -3,6 +3,7 @@ import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
 import Drawcanvas from './drawcanvas'
 import EndRound from './endRound';
+import EndGame from './endGame';
 
 const Canvas = ({ room, }) => {
   const players = room?.players ?? []
@@ -12,6 +13,8 @@ const Canvas = ({ room, }) => {
   const [endRound, setEndRound] = useState(false)
   const [count, setCount] = useState(10)
   const [RoundUpdate, setRoundUpdate] = useState(null)
+  const [endGamePage, setEndGamePage] = useState(false)
+  const [gameEndData, setGameEndData] = useState(null)
   const intervalRef = useRef(null);
   const socket = getSocket()
   useEffect(() => {
@@ -93,9 +96,33 @@ const Canvas = ({ room, }) => {
     }
   }, [])
 
+  useEffect(() => {
+    const handleGameEndUpdate = (endGameData) => {
+      setGameEndData(endGameData)
+      console.log('rendered')
+      setEndGamePage(true)
+    }
+
+    socket.on('game_end', handleGameEndUpdate)
+
+    return () => {
+
+      socket.off('game_end', handleGameEndUpdate)
+
+    }
+  }, [])
+  useEffect(()=>{
+    console.log(gameEndData)
+  },[gameEndData])
+
 
   return (
-    <div className='bg-yellow-400 text-black'>
+    <div className='relative bg-yellow-400 text-black'>
+      {endGamePage && (
+        <div className='fixed inset-0 z-50'>
+          <EndGame gameEndData={gameEndData} />
+        </div>
+      )}
 
       {/* header */} {endRound && <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/50">
         <EndRound RoundUpdate={RoundUpdate} count={count} />

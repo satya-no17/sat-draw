@@ -21,13 +21,10 @@ const Page = ({ }) => {
   return (
     <div>
       {room.status === 'lobby' && <Lobby room={room} />}
-      {(room.status === 'playing' || room.status === 'round_end') && (
+      {(room.status === 'playing' || room.status === 'round_end' || room.status === 'game_end') && (
         <Canvas
           room={room}
         />
-      )}
-      {room.status === 'game_end' && (
-        <div>Results screen goes here (not built yet)</div>
       )}
 
     </div>
