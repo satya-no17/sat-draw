@@ -31,26 +31,22 @@ export function nextTurn(io, room, roomId) {
     });
     const isLastPlayerInRound = room.currentDrawerIndex >= room.players.length - 1;
     if (isLastPlayerInRound) {
-        room.currentRound += 1;
         room.currentDrawerIndex = 0;
     } else {
         room.currentDrawerIndex += 1;
     }
+    room.currentRound += 1;
+
     const isGameOver = room.currentRound > room.totalRounds;
 
     if (isGameOver) {
         room.status = "game_end"
         io.to(roomId).emit('game_end', {
             finalScores: room.players.
-                map(p => ({ id: p.id, name: p.name, score: p.score }))
+                map(p => ({ id: p.id, name: p.name, score: p.score,avatar:p.avatar }))
                 .sort((a, b) => b.score - a.score)
         })
-        //bad me htana h 
-        io.to(roomId).emit('room_update', {
-            finalScores: room.players.
-                map(p => ({ id: p.id, name: p.name, score: p.score }))
-                .sort((a, b) => b.score - a.score)
-        })
+
         return
     }
 

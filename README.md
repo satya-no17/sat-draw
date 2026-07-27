@@ -1,4 +1,4 @@
-# 🎨 Sat-Draw
+# Sat-Draw
 
 A real-time multiplayer draw-and-guess game — built from scratch with **Next.js**, **Express**, and **Socket.IO**. Create a room, share the code, and play live with friends: one person draws, everyone else races to guess the word.
 
@@ -6,7 +6,7 @@ Inspired by Skribbl.io, built to understand what actually goes into real-time mu
 
 ---
 
-## ✨ Features
+## Features
 
 - **Room-code multiplayer** — create a room, get a shareable 5-character code, friends join instantly
 - **Live synced drawing** — every stroke streams to all players in real time via WebSockets
@@ -20,7 +20,7 @@ Inspired by Skribbl.io, built to understand what actually goes into real-time mu
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 **Frontend**
 - [Next.js](https://nextjs.org/) (App Router)
@@ -35,7 +35,7 @@ Inspired by Skribbl.io, built to understand what actually goes into real-time mu
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 The app is split into two independent services:
 
@@ -54,7 +54,7 @@ The app is split into two independent services:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 scribble/
@@ -95,7 +95,7 @@ scribble/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js 18+
@@ -143,7 +143,7 @@ Visit **http://localhost:3000** — open it in a couple of browser tabs to test 
 
 ---
 
-## 🔌 Socket Events Reference
+## Socket Events Reference
 
 **Client → Server**
 
@@ -173,7 +173,7 @@ Visit **http://localhost:3000** — open it in a couple of browser tabs to test 
 
 ---
 
-## 🎮 Game Flow
+## Game Flow
 
 1. **Create or join** a room from the dashboard using a name, avatar, and room code
 2. **Lobby** — players wait, host sees a "Start" button once 2+ players have joined
@@ -191,4 +191,4 @@ Readme written by Claude
 ---
 
 
-## 📄 License
+## License
