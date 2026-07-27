@@ -191,4 +191,9 @@ Readme written by Claude
 ---
 
 
+<<<<<<< HEAD
 ## License
+=======
+## 📄 License
+MIT
+>>>>>>> 35d7bc4f5892b28a451dc48258ec63af01d358b5
