@@ -27,94 +27,72 @@ const Lobby = ({ room }) => {
 
     return (
         <>
-            <div className="flex justify-center bg-blue-500 flex justify-between items-center px-4 py-2 font-semibold">
-
-                <p className="text-4xl underline font-bold">
-                    Sat Draw
-                </p>
+            <div className="flex items-center justify-between border-b-2 border-blue-600 bg-blue-800 px-4 py-4 text-white sm:px-8">
+                <p className="text-3xl font-bold sm:text-4xl">Sat Draw</p>
+                <p className="rotate-1 rounded-full bg-yellow-400 px-3 py-1 text-xs text-black shadow">lobby doodle party</p>
             </div>
-            <div className='sm:p-10 flex flex-col-reverse bg-blue-800 w-full h-[95vh] sm:flex-row  items-center  gap-4 py-4 '>
-
-                <div className="min-w-[50%] p-3 h-9/12 flex flex-col rounded-xl gap-1">
-                    <p className='w-full text-center text-black  text-2xl'>Players</p>
-                    {room?.players?.map((player, index) => (
+            <div className='min-h-[calc(100vh-76px)] bg-blue-800 p-4 sm:p-8'>
+                <div className='mx-auto flex max-w-6xl flex-col-reverse items-stretch gap-6 lg:flex-row'>
+                    <div className="flex min-w-0 flex-1 flex-col gap-3 rounded-3xl border-2 border-blue-600 bg-yellow-400 p-5 text-black shadow-xl">
+                        <p className='w-full text-center text-3xl'>Your drawing crew</p>
+                        <p className='text-center text-sm'>Invite friends with the room code—everyone gets a turn at the canvas.</p>
+                        {room?.players?.map((player, index) => (
+                            <div
+                                key={player.id}
+                                className={`flex items-center justify-between gap-3 rounded-2xl border-2 border-black p-4 shadow ${colors[index % colors.length]
+                                    }`}
+                            >
+                                <p className="text-lg">{player.name}</p>
+                                <Image
+                                    className="rounded-full border-2 border-white"
+                                    src={player.avatar}
+                                    height={40}
+                                    width={40}
+                                    alt="avatar"
+                                />
+                                {player.id === room.hostId && (
+                                    <span className="rounded-full bg-yellow-300 px-2 py-1 text-xs font-bold text-black">host ✦</span>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="min-w-0 flex-1 overflow-hidden rounded-3xl border-2 border-blue-600 text-white shadow-xl">
                         <div
-                            key={player.id}
-                            className={`p-4 shadow border-b rounded-xl flex gap-3 justify-between items-center ${colors[index % colors.length]
-                                }`}
-                        >
-                            <p>Name: {player.name}</p>
-                            <Image
-                                className="rounded-full"
-                                src={player.avatar}
-                                height={40}
-                                width={40}
-                                alt="avatar"
-                            />
-                            {player.id === room.hostId && (
-                                <span className="text-yellow-300 font-bold rotate-40 text-xs">
-                                    host
-                                </span>
-                            )}
+                            className="flex min-h-64 cursor-pointer flex-col items-center justify-center gap-2 bg-yellow-400 p-6 text-black"
+                            onClick={() => {
+                                navigator.clipboard.writeText(room.roomId);
+                                setCopied(true);
+                                setTimeout(() => {
+                                    setCopied(false)
+                                }, 1500);
+                            }}>
+                            <p className="text-lg font-medium uppercase tracking-widest">Your room code</p>
+                            <p className="text-6xl font-extrabold tracking-[0.2em] text-red-600 drop-shadow-lg sm:text-7xl">{room?.roomId}</p>
+                            <p className={`text-2xl transition-all duration-300 ${copied ? "rotate-360 scale-75" : ""}`}>📋{copied ? ' copied!' : ''}</p>
+                            <p className='text-xs'>Click the code to copy and send it to your crew.</p>
                         </div>
-                    ))}
-
-                </div>
-                <div className=" min-w-[50%] h-9/12 rounded-2xl overflow-hidden  border-2 border-blue-600  text-white">
-
-                    {/* Lobby Info */}
-                    <div
-                        className={`flex flex-col items-center justify-center h-1/2 gap-2 bg-yellow-500 `}
-                        onClick={() => {
-                            navigator.clipboard.writeText(room.roomId);
-                            setCopied(true);
-                            setTimeout(() => {
-                                setCopied(false)
-                            }, 1500);
-                        }}>
-                        <p
-                            className="text-lg font-medium uppercase tracking-widest text-black">
-                            Room number..
-                        </p>
-
-                        <p className="text-6xl font-extrabold tracking-wider text-red-700 drop-shadow-lg">
-                            {room?.roomId}
-                        </p>
-                        <p className={`text-2xl transition-all duration-300 ${copied ? "rotate-360 scale-75" : ""
-                            }`}
-                        >
-                            📋{copied ? 'copied' : ''}</p><p className='text-black text-xs'>click to copy</p>
-                    </div>
-
-                    {/* Buttons */}
-                    <div className="flex flex-col gap-3 border-y border-blue-400 bg-slate-800/70 p-5 sm:flex-row">
-                        <button
-                            onClick={handleStart}
-                            disabled={room?.hostId !== socket.id}
-                            className="p-4 shadow border-b rounded-xl flex-1 gap-3  bg-green-600 transition duration-200 hover:scale-105 active:scale-95"
-                        >
-                            {room?.hostId === socket.id ? 'Start' : 'waiting for host to start'}
-                        </button>
-
-                        <button
-                            onClick={handleLeave}
-                            className=" border-b flex-1 rounded-xl bg-gradient-to-r from-red-500 to-pink-600 py-3 font-bold text-white shadow-lg transition duration-200 hover:scale-105 hover:from-red-600 hover:to-pink-700 active:scale-95"
-                        >
-                            Leave game
-                        </button>
-                    </div>
-
-                    <div className="flex h-1/4 items-center justify-center bg-purple-700">
-                        <p className="text-xl font-semibold">
-                            This game has{" "}
-                            <span className="text-yellow-300 font-bold">
-                                {room?.totalRounds}
-                            </span>{" "}
-                            rounds
-                        </p>
+                        <div className="flex flex-col gap-3 border-y-2 border-blue-600 bg-blue-700 p-5 sm:flex-row">
+                            <button
+                                onClick={handleStart}
+                                disabled={room?.hostId !== socket.id}
+                                className="flex-1 rounded-xl border-2 border-black bg-green-500 p-4 text-lg text-black shadow-[3px_3px_0_#171717] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none disabled:cursor-not-allowed disabled:bg-blue-300 disabled:shadow-none"
+                            >
+                                {room?.hostId === socket.id ? 'Start' : 'waiting for host to start'}
+                            </button>
+                            <button
+                                onClick={handleLeave}
+                                className="flex-1 rounded-xl border-2 border-black bg-red-500 py-3 text-lg font-bold text-white shadow-[3px_3px_0_#171717] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"
+                            >
+                                Leave game
+                            </button>
+                        </div>
+                        <div className="flex min-h-28 items-center justify-center bg-purple-500 p-5 text-center">
+                            <p className="text-xl">This game has <span className="rounded bg-yellow-400 px-2 py-1 font-bold text-black">{room?.totalRounds}</span> rounds</p>
+                        </div>
                     </div>
                 </div>
-            </div></>
+            </div>
+        </>
     )
 }
 

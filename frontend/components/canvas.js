@@ -117,7 +117,7 @@ const Canvas = ({ room, }) => {
 
 
   return (
-    <div className='relative bg-yellow-400 text-black'>
+    <div className='relative min-h-screen bg-blue-800 text-black'>
       {endGamePage && (
         <div className='fixed inset-0 z-50'>
           <EndGame gameEndData={gameEndData} />
@@ -128,38 +128,39 @@ const Canvas = ({ room, }) => {
         <EndRound RoundUpdate={RoundUpdate} count={count} />
       </div>}
 
-      <div className='w-full flex justify-between items-center'>
-        <p>Rounds Left:{room?.totalRounds - room?.currentRound}/{room?.totalRounds}  </p>
-        <p className='text-4xl underline'>Sat Draw</p>
-        <p>Game Id:{room.roomId}</p>
+      <div className='flex flex-wrap items-center justify-between gap-3 border-b-2 border-blue-600 bg-blue-800 px-4 py-4 text-white sm:px-8'>
+        <p className='rounded-full bg-yellow-400 px-3 py-1 text-sm text-black'>Rounds left: {room?.totalRounds - room?.currentRound}/{room?.totalRounds}</p>
+        <p className='text-3xl font-bold sm:text-4xl'>Sat Draw</p>
+        <p className='rounded-full bg-purple-500 px-3 py-1 text-sm'>Room: {room.roomId}</p>
       </div>
-      <div className='bg-white w-full h-[94vh] flex '>
+      <div className='mx-auto grid max-w-[1600px] gap-4 p-4 lg:grid-cols-[112px_minmax(0,1fr)_340px] sm:p-6'>
         {/* leaderboard */}
-        <div className=' flex flex-col bg-blue-800 items-center p-2'>
-          <p className='font-bold text-xl'>Players</p>
+        <div className='flex flex-row justify-center gap-3 rounded-3xl border-2 border-blue-600 bg-yellow-400 p-3 lg:flex-col lg:items-center'>
+          <p className='hidden text-center text-xl lg:block'>Players</p>
           {room.players.map(player => (
-            <div key={player.id}>
-              <Image src={player.avatar} alt='avt' width={70} height={70} className='rounded-full' />
+            <div key={player.id} className='group relative'>
+              <Image src={player.avatar} alt='avt' width={60} height={60} className='rounded-full border-2 border-white bg-white transition group-hover:scale-110' />
+              <span className='absolute -bottom-1 left-1/2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-blue-800 px-2 py-1 text-xs text-white group-hover:block'>{player.name}</span>
             </div>
           ))}
         </div>
         {/* canvas */}
-        <div className='bg-green-400 w-full '>
+        <div className='min-w-0 rounded-3xl border-2 border-blue-600 bg-green-500 p-3 shadow-xl sm:p-5'>
           <Drawcanvas room={room} />
         </div>
         {/* chat */}
-        <div className='flex w-[40%] flex-col bg-amber-600'>
-          <div className='w-full bg-amber-600 text-2xl flex  gap-1'>
-            <p>Guess this :</p>
-            <p>{room.currentWord}</p>
+        <div className='flex min-h-[330px] flex-col overflow-hidden rounded-3xl border-2 border-blue-600 bg-purple-500 shadow-xl'>
+          <div className='flex flex-wrap gap-2 bg-yellow-400 p-4 text-black'>
+            <p className='text-xl'>Guess this:</p>
+            <p className='rounded bg-white px-2 text-xl'>{room.currentWord}</p>
           </div>
           {/* chat */}
-          <div className='bg-purple-500 m-2 h-3/5 rounded shadow flex p-1 justify-center flex-col'>
-            <div className='h-full p-1'>
+          <div className='m-3 flex flex-1 flex-col justify-center rounded-2xl bg-blue-800 p-3 shadow-inner'>
+            <div className='h-full space-y-1 overflow-y-auto p-1'>
               {messages.map(msg => (
                 <div key={msg.id}>
                   {msg.type === 'correct' ? (
-                    <p className="font-semibold text -green-400">
+                    <p className="rounded bg-green-500 px-2 py-1 font-semibold text-black">
                       {msg.name} guessed it (+{msg.points})
                     </p>
                   ) : (
@@ -172,9 +173,9 @@ const Canvas = ({ room, }) => {
               ))}
               <div ref={scrollRef} />
             </div>
-            <div className=' flex item-center justify-center h-10 w-full '>
-              <input placeholder='enter Guess' className='border p-1 rounded-s-md w-[92%]' value={input} onChange={(e) => setInput(e.target.value)}></input>
-              <button onClick={handleSend} className='border active:animate-bounce animate-pulse p-1 rounded-e-full  '>-&gt;&gt;</button>
+            <div className='mt-3 flex h-11 w-full'>
+              <input placeholder='enter guess' className='w-full rounded-l-xl border-2 border-black bg-white px-3 text-black outline-none' value={input} onChange={(e) => setInput(e.target.value)}></input>
+              <button onClick={handleSend} className='rounded-r-xl border-2 border-l-0 border-black bg-red-500 px-4 text-white transition hover:bg-red-600 active:scale-95'>→</button>
             </div>
           </div>
 

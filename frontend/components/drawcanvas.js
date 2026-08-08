@@ -123,19 +123,23 @@ const Drawcanvas = ({ room }) => {
     }, [])
 
     return (
-        <>
+        <div className="flex h-full flex-col items-center gap-3">
+            <div className="flex w-full items-center justify-between gap-3 rounded-xl bg-yellow-400 px-4 py-2 text-black">
+                <p className="text-sm sm:text-base">Make it unmistakable—your team is watching!</p>
+                <span className="rounded bg-white px-2 py-1 text-xs">Live canvas</span>
+            </div>
             <canvas id='board'
                 ref={canvasRef}
                 onMouseDown={startDrawing}
                 onMouseMove={draw}
                 onMouseUp={stopDrawing}
                 onMouseLeave={stopDrawing}
-                className='bg-white border'
+                className='max-w-full rounded-2xl border-4 border-white bg-white shadow-lg'
             />
 
 
-            <div className="flex items-center gap-2">
-                <label>Color</label>
+            <div className="flex w-full flex-wrap items-center justify-center gap-3 rounded-xl bg-blue-800 p-3 text-white">
+                <label className="text-lg">Brush color</label>
                 <input
                     type="color"
                     value={color}
@@ -144,12 +148,12 @@ const Drawcanvas = ({ room }) => {
             </div>
             <button
                 onClick={clearCanvas}
-                className="px-4 py-2 bg-red-500 text-white rounded"
+                className="rounded-lg border-2 border-black bg-red-500 px-4 py-2 text-white shadow-[2px_2px_0_#171717] active:translate-y-0.5 active:shadow-none"
             >
                 Clear
             </button>
 
-        </>
+        </div>
     )
 }
 

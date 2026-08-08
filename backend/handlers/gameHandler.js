@@ -116,7 +116,18 @@ export function handlePlayerLeave(io, socket, roomId) {
         endRound(io, room, roomId);
     } else {
         console.log('bug99')
-        io.to(roomId).emit('room_update', room);
+        console.log(room)
+        io.to(roomId).emit('room_update',{
+            roomId:room.roomId,
+            hostId:room.hostId,
+            status:'playing',
+            players:room.players,
+            totalRounds:room.totalRounds,
+            currentRound:room.currentRound,
+            currentDrawerIndex:room.currentDrawerIndex,
+            currentWord:room.currentWord,
+            maskedWord:room.maskedWord
+        });
 
     }
     console.log('baigan')
