@@ -131,7 +131,7 @@ npm install
 
 Create a `.env.local` file:
 ```env
-BC_URL=http://localhost:5000
+NEXT_PUBLIC_BC_URL=http://localhost:5000
 ```
 
 Run it:
@@ -191,9 +191,5 @@ Readme written by Claude
 ---
 
 
-<<<<<<< HEAD
-## License
-=======
 ## 📄 License
 MIT
->>>>>>> 35d7bc4f5892b28a451dc48258ec63af01d358b5
