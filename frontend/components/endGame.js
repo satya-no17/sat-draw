@@ -7,7 +7,7 @@ import React from 'react'
 const EndGame = ({ gameEndData }) => {
 const router = useRouter()
   return (
-    <div className='flex h-screen w-screen items-center justify-center bg-black/70 px-4'>
+    <div className='flex h-screen w-screen items-center justify-center text-black bg-black/70 px-4'>
       <div className='w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-2xl'>
         <p className='text-sm font-semibold uppercase tracking-[0.3em] text-gray-500'>Game over</p>
         <h2 className='mt-3 text-3xl font-bold text-gray-900'>The match has ended</h2>

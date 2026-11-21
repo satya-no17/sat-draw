@@ -74,10 +74,14 @@ const Lobby = ({ room }) => {
                         <div className="flex flex-col gap-3 border-y-2 border-blue-600 bg-blue-700 p-5 sm:flex-row">
                             <button
                                 onClick={handleStart}
-                                disabled={room?.hostId !== socket.id}
+                                disabled={room?.hostId !== socket.id || (room?.players?.length || 0) < 2}
                                 className="flex-1 rounded-xl border-2 border-black bg-green-500 p-4 text-lg text-black shadow-[3px_3px_0_#171717] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none disabled:cursor-not-allowed disabled:bg-blue-300 disabled:shadow-none"
                             >
-                                {room?.hostId === socket.id ? 'Start' : 'waiting for host to start'}
+                                {room?.hostId !== socket.id
+                                    ? 'waiting for host to start'
+                                    : (room?.players?.length || 0) < 2
+                                    ? 'Waiting for players (min 2)'
+                                    : 'Start'}
                             </button>
                             <button
                                 onClick={handleLeave}

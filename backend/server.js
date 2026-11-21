@@ -38,7 +38,8 @@ io.on('connection', (socket) => {
             currentDrawerIndex: 0,
             currentWord: null,
             maskedWord: null,
-            roundTimer: null
+            roundTimer: null,
+            nextTurnTimer: null
         }
         socket.join(roomId)
         socket.data.roomId = roomId;
@@ -65,6 +66,7 @@ io.on('connection', (socket) => {
         const room = rooms[roomId]
         if (!room) return socket.emit('error', { message: "no room" })
         if (room.hostId !== socket.id) return socket.emit('error', { message: "Only host can start" });
+        if (room.players.length < 2) return socket.emit('error', { message: "At least 2 players needed to start" });
         room.status = 'playing'
         room.currentRound = 1
         startRound(io, room, roomId)
@@ -107,6 +109,7 @@ io.on('connection', (socket) => {
         const room = rooms[roomId]
 
         if (!room) return socket.emit('error', { message: "no room" })
+        if (room.status !== 'playing' || !room.currentWord) return;
         const drawerId = room.players[room.currentDrawerIndex]?.id;
         if (socket.id === drawerId) {
             return;
@@ -128,6 +131,7 @@ io.on('connection', (socket) => {
 
 
     socket.on("leave_room", (data) => {
+        socket.data.roomId = null;
         handlePlayerLeave(io, socket, data.roomId);
     });
 
@@ -135,7 +139,12 @@ io.on('connection', (socket) => {
         const { roomId } = data
         const room = rooms[roomId];
         if (!room) return socket.emit('error', { message: "no room" });
-        socket.emit('room_update', room);
+        const drawerId = room.players[room.currentDrawerIndex]?.id;
+        if (socket.id === drawerId || room.status !== 'playing') {
+            socket.emit('room_update', room);
+        } else {
+            socket.emit('room_update', { ...room, currentWord: undefined });
+        }
     })
     socket.on("disconnect", () => {
         console.log('user disconnected:', socket.id);

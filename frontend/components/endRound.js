@@ -35,7 +35,7 @@ import React from 'react'
 
 const EndRound = ({ RoundUpdate ,count}) => {
   return (
-    <div className="bg-white rounded-3xl shadow-2xl w-[500px] max-w-[90vw] overflow-hidden animate-popup">
+    <div className="text-black bg-white rounded-3xl shadow-2xl w-[500px] max-w-[90vw] overflow-hidden animate-popup">
         <div className='flex flex-col items-center justify-center'>
 <p className='text-sm opacity-80'>next Round in</p>
 <p className='text-5xl'>{count}</p>
